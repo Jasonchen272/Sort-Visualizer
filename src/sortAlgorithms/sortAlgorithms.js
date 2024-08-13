@@ -226,21 +226,57 @@ function testSort(array) {
     return true;
 }
 
-//================= STALIN SORT =================
-export function getStalinSortAnimations(array) {
-    const animations = []
+//================= COCKTAIL SORT =================
 
+export function getCocktailSortAnimations(array) {
+    const animations = [];
+    //no sorting needed 
     if (array.length <= 1) return array;
-
-    for (let i = 1; i < array.length; i++) {
-        if (array[i - 1] > array[i]) {
-            for (let j = i; j < array.length; j++) {
-                animations.push([j])
-                animations.push([j])
+    let r = array.length - 1;
+    let l = 0;
+    let swapped = true;
+    while (swapped) {
+        swapped = false;
+        for (let i = 0; i < r; i++) {
+            if (array[i] > array[i + 1]) {
+                animations.push([i, i + 1])
+                animations.push([i, i + 1])
+                swap(array, i, i + 1)
+                swapped = true
             }
-            return animations;
         }
-        animations.push([i - 1, i])
-        animations.push([i - 1, i])
+        r -= 1;
+        if(!swapped) {
+            break
+        }
+        swapped = false
+        for (let i = r; i >= l; i--) {
+            if (array[i] > array[i + 1] ) {
+                animations.push([i, i + 1])
+                animations.push([i, i + 1])
+                swap(array, i, i + 1)
+                swapped = true
+            }
+        }
+        l += 1;
     }
+    return animations;
+
+}
+
+export function getSelectionSortAnimations(array) {
+    const animations = []
+    for (let i = 0; i < array.length; i++) {
+        let minimum = i;
+        for (let j = i + 1; j < array.length; j++) {
+            if (array[j] < array[minimum]) {
+                minimum = j;
+            }
+        }
+        animations.push([minimum, i])
+        animations.push([minimum, i])
+        swap(array, minimum, i)
+    }
+    console.log(testSort(array))
+    return animations;
 }

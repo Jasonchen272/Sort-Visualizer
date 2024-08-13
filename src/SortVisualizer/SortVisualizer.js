@@ -1,15 +1,15 @@
 import {React, useState, useEffect} from 'react'
 import "./SortVisualizer.css"
-import { getMergeSortAnimations, getQuickSortAnimations, getHeapSortAnimations, getBubbleSortAnimations, getStalinSortAnimations } from '../sortAlgorithms/sortAlgorithms'
+import { getMergeSortAnimations, getQuickSortAnimations, getHeapSortAnimations, getBubbleSortAnimations, getCocktailSortAnimations, getSelectionSortAnimations } from '../sortAlgorithms/sortAlgorithms'
 // import * as sortAlgorithms from '../sortAlgorithms/sortAlgorithms'
 
 const SORT_DELAY_MS = 1
 function SortVisualizer() {
     const [arr, setArr] = useState([])
-    const [sorting, setSorting] = useState(false)
+    const [arrayLength, setArrayLength] = useState(100)
 
     useEffect(() => {
-        generateNewArray();
+        generateNewArray(100);
       }, []);
 
     function randIntHelper(lower, upper) {
@@ -18,9 +18,10 @@ function SortVisualizer() {
         return Math.floor(Math.random() * (upper - lower + 1) + lower)
     }
 
-    function generateNewArray() {
+    function generateNewArray(len) {
         const array = []
-        for (let i = 0; i < 300; i++) {
+        setArrayLength(len)
+        for (let i = 0; i < len; i++) {
             array.push(randIntHelper(5, 500))
         }
         setArr(array)
@@ -41,8 +42,8 @@ function SortVisualizer() {
                 const [barOneIndex, barTwoIndex] = animations[i];
                 const barOneStyle = arrayBars[barOneIndex].style;
                 const barTwoStyle = arrayBars[barTwoIndex].style;
-                //1st of 2 is red second of 2 is lightblue
-                const color = i % 3 === 0 ? 'red' : 'lightblue';
+                //1st of 2 is red second of 2 is plum
+                const color = i % 3 === 0 ? 'red' : 'plum';
                 setTimeout(() => {
                     barOneStyle.backgroundColor = color;
                     barTwoStyle.backgroundColor = color;
@@ -50,6 +51,7 @@ function SortVisualizer() {
             } else {
                 setTimeout(() => {
                     // swap animation
+
                     const [barOneIndex, newHeight] = animations[i];
                     const barOneStyle = arrayBars[barOneIndex].style;
                     barOneStyle.height = `${newHeight}px`;
@@ -87,10 +89,10 @@ function SortVisualizer() {
                 }, i * SORT_DELAY_MS)
             } else {
                 setTimeout(() => {
-                    barOneStyle.backgroundColor = 'lightblue'
-                    barTwoStyle.backgroundColor = 'lightblue'
+                    barOneStyle.backgroundColor = 'plum'
+                    barTwoStyle.backgroundColor = 'plum'
                     if (newPivot) {
-                        pivotStyle.backgroundColor = 'lightblue'
+                        pivotStyle.backgroundColor = 'plum'
                         newPivot = false
                     }
                 }, i * SORT_DELAY_MS)
@@ -112,9 +114,7 @@ function SortVisualizer() {
     }
 
     function heapSort() {
-        console.log(arr)
         const animations = getHeapSortAnimations(arr)
-        console.log(arr)
         for (let i = 0; i < animations.length; i++) {
             const arrayBars = document.getElementsByClassName('array-value')
             const [barOneIndex, barTwoIndex] = animations[i]
@@ -130,8 +130,8 @@ function SortVisualizer() {
                 }, i * SORT_DELAY_MS)
             } else {
                 setTimeout(() => {
-                    barOneStyle.backgroundColor = 'lightblue'
-                    barTwoStyle.backgroundColor = 'lightblue'
+                    barOneStyle.backgroundColor = 'plum'
+                    barTwoStyle.backgroundColor = 'plum'
                 }, i * SORT_DELAY_MS)
             }
         }
@@ -156,54 +156,62 @@ function SortVisualizer() {
                 }, i * SORT_DELAY_MS)
             } else {
                 setTimeout(() => {
-                    barOneStyle.backgroundColor = 'lightblue'
-                    barTwoStyle.backgroundColor = 'lightblue'
+                    barOneStyle.backgroundColor = 'plum'
+                    barTwoStyle.backgroundColor = 'plum'
                 }, i * SORT_DELAY_MS)
             }
         }
     }
 
-    function stalinSort() {
-        const animations = getStalinSortAnimations(arr) 
-        for (let i = 0; i < animations.length; i++) {
+    function cocktailSort() {
+        const animations = getCocktailSortAnimations(arr)
+        for (let i = 0; i < animations.length; i ++) {
             const arrayBars = document.getElementsByClassName('array-value')
-            if (animations[i].length === 2) {
-                const [barOneIndex, barTwoIndex] = animations[i]
-                const barOneStyle = arrayBars[barOneIndex].style
-                const barTwoStyle = arrayBars[barTwoIndex].style
-                if (i % 2 === 0) {
-                    setTimeout(() => {
-                        barOneStyle.backgroundColor = 'red'
-                        barTwoStyle.backgroundColor = 'red'
-                    }, i * SORT_DELAY_MS)
-                } else {
-                    setTimeout(() => {
-                        barOneStyle.backgroundColor = 'lightblue'
-                        barTwoStyle.backgroundColor = 'lightblue'
-                    }, i * SORT_DELAY_MS)
-                }
-            } else {
-                const [barOneIndex] = animations[i]
-                const barOneStyle = arrayBars[barOneIndex].style
-                if (i % 2 ===0) {
+            const [barOneIndex, barTwoIndex] = animations[i]
+            const barOneStyle = arrayBars[barOneIndex].style
+            const barTwoStyle = arrayBars[barTwoIndex].style
+            if (i % 2 === 0) {
                 setTimeout(() => {
                     barOneStyle.backgroundColor = 'red'
+                    barTwoStyle.backgroundColor = 'red'
+                    const temp = barOneStyle.height;
+                    barOneStyle.height = barTwoStyle.height;
+                    barTwoStyle.height = temp;
                 }, i * SORT_DELAY_MS)
-                } else {
-                    setTimeout(() => {
-                        barOneStyle.backgroundColor = 'white'
-                    }, i * SORT_DELAY_MS)
-                }
+            } else {
+                setTimeout(() => {
+                    barOneStyle.backgroundColor = 'plum'
+                    barTwoStyle.backgroundColor = 'plum'
+                }, i * SORT_DELAY_MS)
             }
         }
     }
 
-    async function doSort(sortFunc) {
-        setSorting(true)
-        await sortFunc();
-        setSorting(false)
-
+    function selectionSort() {
+        const animations = getSelectionSortAnimations(arr)
+        for (let i = 0; i < animations.length; i ++) {
+            const arrayBars = document.getElementsByClassName('array-value')
+            const [barOneIndex, barTwoIndex] = animations[i]
+            const barOneStyle = arrayBars[barOneIndex].style
+            const barTwoStyle = arrayBars[barTwoIndex].style
+            if (i % 2 === 0) {
+                setTimeout(() => {
+                    barOneStyle.backgroundColor = 'red'
+                    barTwoStyle.backgroundColor = 'red'
+                    const temp = barOneStyle.height;
+                    barOneStyle.height = barTwoStyle.height;
+                    barTwoStyle.height = temp;
+                }, i * SORT_DELAY_MS)
+            } else {
+                setTimeout(() => {
+                    barOneStyle.backgroundColor = 'plum'
+                    barTwoStyle.backgroundColor = 'plum'
+                }, i * SORT_DELAY_MS)
+            }
+        }
     }
+
+
 
     function testSort() {
         console.log(arrayBarHeights())
@@ -232,23 +240,38 @@ function SortVisualizer() {
 
 
     return (
-        <div className='array-container'>
-            {arr.map((val, i) => (
-                <div 
-                className="array-value" 
-                key={i}
-                style={{height: `${val}px`}}></div>
-            ))}
-            <div>
-                <button className="buttons" onClick={generateNewArray} disabled={sorting}>Generate New Array</button>
-                <button className="buttons" onClick={mergeSort} disabled={sorting}>Merge Sort</button>
-                <button className="buttons" onClick={quickSort} disabled={sorting}>Quick Sort</button>
-                <button className="buttons" onClick={heapSort} disabled={sorting}>Heap Sort</button>
-                <button className="buttons" onClick={bubbleSort} disabled={sorting}>Bubble Sort</button>
-                {/* <button className="buttons" onClick={stalinSort} disabled={sorting}>Stalin Sort</button> */}
-                <button className="buttons" onClick={testSort} disabled={sorting}>Test Sorting</button>
+        <div className="container">
+            <div className='array-container'>
+                {arr.map((val, i) => (
+                    <div 
+                    className="array-value" 
+                    key={i}
+                    style={{height: `${val}px`}}></div>
+                ))}
+                <div>
+                    <button className="buttons" onClick={() => generateNewArray(arrayLength)}>Generate New Array</button>
+                    <button className="buttons" onClick={mergeSort}>Merge Sort</button>
+                    <button className="buttons" onClick={quickSort}>Quick Sort</button>
+                    <button className="buttons" onClick={heapSort}>Heap Sort</button>
+                    <button className="buttons" onClick={bubbleSort}>Bubble Sort</button>
+                    <button className="buttons" onClick={cocktailSort}>Cocktail Sort</button>
+                    <button className="buttons" onClick={selectionSort}>Selection Sort</button>
+
+                    {/* <button className="buttons" onClick={testSort} disabled={sorting}>Test Sorting</button> */}
+                </div>
+                <div>
+                    <input
+                        type="range"
+                        min="25"
+                        max="350"
+                        value={arrayLength}
+                        onChange={(e) => (generateNewArray(e.target.value))}
+                        className="slider"
+                    />
+                    <p>Array Length: {arrayLength}</p>
             </div>
 
+            </div>
         </div>
     )
 }
